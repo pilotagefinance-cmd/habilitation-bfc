@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche de Création User – SAP BFC</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+var ENTITIES_DATA={"2-G":{"label":"Geodis","branche":"T&L","h2":{"2-G3":{"label":"Global Freight Forwarding","h3":{"2-G32":{"label":"Freight - France","h4":{"2-G323":{"label":"Freight - Sealogis","entities":[{"code":"CH01","label":"Challenge International (Absorbée par SI22 en 2019.05)"}]}}}}}},"br":{"BR1-02":{"label":"France Maghreb","br2":{"BR2-021":{"label":"France - FF","br3":{"BR3-0211":{"label":"France - FF - Sealogis & Pôle PL"}}}}}}},
+"3-R":{"label":"Rail Logistics Europe","branche":"T&L","h2":{"3-R5":{"label":"VIIA","h3":{"3-R51":{"label":"VIIA","h4":{"3-R511":{"label":"AFA et ses stés","entities":[{"code":"CM01","label":"Compagnie Modalohr Express Holding (Absorbée par FRI33 en 2018.09)"}]}}}}}}},"6-X":{"label":"Corporate SNCF","branche":"SA SNCF","h2":{"6-X9":{"label":"Corporate - Non opérationnelles","h3":{"6-X91":{"label":"Corporate SNCF - non opérationnelles","h4":{"6-X911":{"label":"Corporate SNCF - non opérationnelles","entities":[{"code":"D01","label":"France Rail Publicité (F.R.P.)"}]}}}}},"6-X3":{"label":"SUGE & Corporate","h3":{"6-X33":{"label":"Filiales corporate","h4":{"6-X331":{"label":"Filiales corporate","entities":[{"code":"D02OLD","label":"EUROFIMA (OLD en 2019.11)"}]}}}}}}},
+"4-V":{"label":"SNCF Voyageurs","branche":"SA VOYAGEURS hors KEOLIS","h2":{"4-V3":{"label":"SL Industrielle","h3":{"4-V31":{"label":"SL Matériel","h4":{"4-V312":{"label":"Filiales Matériel","entities":[{"code":"D05","label":"GIE Eurail Test"}]}}}}},"4-V1":{"label":"BL TGV Europe","h3":{"4-V11":{"label":"TGV","h4":{"4-V111":{"label":"TGV","entities":[{"code":"E13","label":"TGV"}]}}}}}}},
+"1-I":{"label":"Gestionnaires d'infrastructure","branche":"SA RESEAU","h2":{"1-I2":{"label":"SNCF Gares & Connexions","h3":{"1-I21":{"label":"SA Gares & Connexions","h4":{"1-I211":{"label":"SA Gares & Connexions","entities":[{"code":"E12","label":"SA Gares & Connexions"}]}}}}}}},
+"5-K":{"label":"Keolis","branche":"KEOLIS","h2":{"5-K4":{"label":"Corporate Keolis","h3":{"5-K41":{"label":"Corporate Keolis","h4":{"5-K413":{"label":"TOP SNCF","entities":[{"code":"K000","label":"Palier Kuvera (ne plus utiliser)"}]},"5-K411":{"label":"Holding Corporate Keolis","entities":[{"code":"K001","label":"Keolis"}]}}}}},"5-K1":{"label":"Keolis France","h3":{"5-K12":{"label":"Régions","h4":{"5-K121":{"label":"DR Nord Est","entities":[{"code":"K00102","label":"DD Flandre Artois (sortie 2014)"}]}}}}}}}}; 
+var ENTITIES_FLAT={"2-G":[{"c":"CH01","l":"Challenge International (Absorbée par SI22 en 2019.05)"}],"3-R":[{"c":"CM01","l":"Compagnie Modalohr Express Holding (Absorbée par FRI33 en 2018.09)"}],"6-X":[{"c":"D01","l":"France Rail Publicité (F.R.P.)"},{"c":"D02OLD","l":"EUROFIMA (OLD en 2019.11)"}],"4-V":[{"c":"D05","l":"GIE Eurail Test"},{"c":"E13","l":"TGV"}],"1-I":[{"c":"E12","l":"SA Gares & Connexions"}],"5-K":[{"c":"K000","l":"Palier Kuvera (ne plus utiliser)"},{"c":"K001","l":"Keolis"},{"c":"K00102","l":"DD Flandre Artois (sortie 2014)"}]};
+</script>
+<style>
+  :root {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f7f8fa;
+    --border: #e2e6ed;
+    --border-focus: #1a3a6b;
+    --text: #1a1f2e;
+    --text-muted: #6b7280;
+    --accent: #1a3a6b;
+    --accent-light: #e8edf5;
+    --accent2: #c8102e;
+    --success: #16a34a;
+    --required: #c8102e;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--accent);
+    color: white;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .site-header .logo {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .site-header .logo svg { opacity: 0.8; }
+  .site-header .sep { width: 1px; height: 24px; background: rgba(255,255,255,0.25); }
+  .site-header .page-title { font-size: 14px; font-weight: 500; opacity: 0.85; }
+
+  /* Layout */
+  .page-wrapper {
+    max-width: 860px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+  }
+
+  /* Form card header */
+  .form-header {
+    background: var(--accent);
+    border-radius: 12px 12px 0 0;
+    padding: 28px 36px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-header::after {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .form-header::before {
+    content: '';
+    position: absolute;
+    right: 60px; bottom: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .form-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .form-header p {
+    font-size: 13px;
+    opacity: 0.7;
+    position: relative;
+  }
+  .form-header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--accent2);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+    position: relative;
+  }
+
+  /* Form body */
+  .form-body {
+    background: var(--surface);
+    border-radius: 0 0 12px 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  /* Required notice */
+  .required-notice {
+    background: #fff8f8;
+    border-bottom: 1px solid #fce8e8;
+    padding: 10px 36px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .required-notice .star { color: var(--required); font-weight: 700; }
+
+  /* Section */
+  .section {
+    padding: 28px 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .section-label .num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-label h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  /* Fields grid */
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .fields-grid.full { grid-template-columns: 1fr; }
+  .field-full { grid-column: 1 / -1; }
+
+  /* Field */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .field label .req { color: var(--required); font-size: 14px; line-height: 1; }
+  .field label .en { color: #b0b8c8; font-weight: 400; font-size: 11px; margin-left: 4px; text-transform: none; letter-spacing: 0; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    outline: none;
+    appearance: none;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(26,58,107,0.1);
+    background: white;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+  }
+  textarea { resize: vertical; min-height: 72px; }
+
+  /* Phases section */
+  .phases-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .phases-title .req { color: var(--required); font-size: 14px; }
+
+  .phases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .phase-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    background: var(--surface2);
+  }
+  .phase-item:hover { border-color: #aab8d0; background: white; }
+  .phase-item.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .phase-item input[type="checkbox"] {
+    width: 15px; height: 15px;
+    margin-top: 1px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+  }
+  .phase-item .phase-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-light);
+    border-radius: 4px;
+    padding: 1px 6px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+  .phase-item.selected .phase-code {
+    background: rgba(26,58,107,0.15);
+  }
+  .phase-item .phase-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* Link */
+  .macro-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: 6px;
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+  .macro-link:hover { opacity: 0.7; }
+  .macro-link svg { flex-shrink: 0; }
+
+  /* Validation section */
+  .validation-bg {
+    background: var(--surface2);
+    border-top: 2px solid var(--border);
+  }
+
+  /* Action buttons */
+  .form-actions {
+    padding: 24px 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    background: white;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    outline: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #122d56; box-shadow: 0 4px 14px rgba(26,58,107,0.35); transform: translateY(-1px); }
+  .btn-secondary {
+    background: white;
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: #aab8d0; color: var(--text); background: var(--surface2); }
+  .btn-reset {
+    background: transparent;
+    color: var(--text-muted);
+    margin-left: auto;
+    font-weight: 400;
+  }
+  .btn-reset:hover { color: var(--accent2); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--accent);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+    max-width: 340px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { background: var(--accent2); }
+
+  /* Hint */
+  .field-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: -2px;
+  }
+
+  /* Radio group */
+  .radio-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    background: var(--surface2);
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .radio-item:hover { border-color: #aab8d0; background: white; }
+  .radio-item input { accent-color: var(--accent); cursor: pointer; }
+  .radio-item.selected { border-color: var(--accent); background: var(--accent-light); font-weight: 500; }
+
+  /* ── Accès Sociétés component ── */
+  .as-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0;
+  }
+  .as-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    font-family: inherit; font-size: 12px; font-weight: 500;
+    color: var(--text-muted); background: none; border: none;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  }
+  .as-tab:hover { color: var(--accent); }
+  .as-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .as-tab-content { display: none; }
+  .as-tab-content.active { display: block; }
+
+  .as-cascade {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .as-cascade-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .as-cascade-label {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .as-list {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-family: inherit; font-size: 12px;
+    color: var(--text); background: var(--surface2);
+    padding: 4px;
+    outline: none;
+    transition: border-color 0.15s;
+    height: 140px;
+  }
+  .as-list:focus { border-color: var(--border-focus); background: white; }
+  .as-list option { padding: 5px 7px; border-radius: 4px; cursor: pointer; }
+  .as-list option:checked { background: var(--accent-light); color: var(--accent); }
+  .as-list:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .as-add-btn {
+    padding: 6px 10px;
+    background: var(--accent-light); color: var(--accent);
+    border: 1.5px solid var(--accent); border-radius: 6px;
+    font-family: inherit; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .as-add-btn:hover:not(:disabled) { background: var(--accent); color: white; }
+  .as-add-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .as-search-row {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
+  }
+  .as-unit-results {
+    border: 1.5px solid var(--border); border-radius: 7px;
+    max-height: 200px; overflow-y: auto; background: var(--surface2);
+  }
+  .as-unit-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 12px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.1s; font-size: 12px;
+  }
+  .as-unit-item:last-child { border-bottom: none; }
+  .as-unit-item:hover { background: var(--accent-light); }
+  .as-unit-item.selected { background: var(--accent-light); }
+  .as-unit-item .unit-code {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+    color: var(--accent); background: rgba(26,58,107,0.1);
+    padding: 1px 6px; border-radius: 4px; margin-right: 8px; flex-shrink: 0;
+  }
+  .as-unit-item .unit-label { color: var(--text-muted); flex: 1; }
+  .as-unit-empty { padding: 20px; text-align: center; font-size: 12px; color: var(--text-muted); }
+
+  .as-tags {
+    display: flex; flex-wrap: wrap; gap: 7px;
+  }
+  .as-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1.5px solid;
+  }
+  .as-tag.hier {
+    background: #e8f0fe; border-color: #4a7fc1; color: #1a3a6b;
+  }
+  .as-tag.unit {
+    background: #e6f4ea; border-color: #4caf50; color: #1b5e20;
+  }
+  .as-tag .tag-type {
+    font-size: 9px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .as-tag button {
+    background: none; border: none; cursor: pointer;
+    color: inherit; opacity: 0.6; padding: 0; font-size: 14px; line-height: 1;
+    display: flex; align-items: center;
+  }
+  .as-tag button:hover { opacity: 1; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 0 36px;
+    background: #f0f2f5;
+    border-bottom: 2px solid var(--border);
+  }
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 18px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ── Admin panel ── */
+  .admin-section { padding: 28px 36px; border-bottom: 1px solid var(--border); }
+  .admin-drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+    position: relative;
+  }
+  .admin-drop-zone:hover, .admin-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-light); }
+  .admin-drop-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    border: none; background: none; box-shadow: none; padding: 0;
+  }
+  .admin-drop-zone input[type="file"]:focus { box-shadow: none; }
+  .admin-drop-zone .dz-icon { color: var(--accent); opacity: 0.5; margin-bottom: 10px; }
+  .admin-drop-zone .dz-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .admin-drop-zone .dz-sub { font-size: 12px; color: var(--text-muted); }
+  .admin-drop-zone .dz-file { font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 6px; display: none; }
+  .admin-preview { margin-top: 20px; display: none; }
+  .admin-preview-title {
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .admin-preview-title .count-badge {
+    background: var(--accent-light); color: var(--accent);
+    font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600;
+  }
+  .admin-table-wrap {
+    border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; max-height: 300px; overflow-y: auto;
+  }
+  .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .admin-table th {
+    background: var(--accent); color: white; padding: 8px 12px;
+    text-align: left; font-weight: 600; letter-spacing: 0.3px;
+    position: sticky; top: 0; z-index: 1;
+  }
+  .admin-table td { padding: 7px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .admin-table tr:last-child td { border-bottom: none; }
+  .admin-table tr:nth-child(even) td { background: var(--surface2); }
+  .admin-table td:first-child { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 500; }
+  .admin-table .branche-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; background: var(--accent-light); color: var(--accent);
+  }
+  .admin-apply-btn { margin-top: 16px; display: flex; align-items: center; gap: 12px; }
+  .admin-info {
+    background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 7px;
+    padding: 10px 14px; font-size: 12px; color: #1b5e20;
+    margin-top: 16px; display: none; align-items: center; gap: 8px;
+  }
+  .admin-error {
+    background: #fff3f3; border: 1px solid #ffb3b3; border-radius: 7px;
+    padding: 10px 14px; font-size: 12px; color: var(--accent2);
+    margin-top: 12px; display: none; align-items: center; gap: 8px;
+  }
+  .admin-format-hint {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; margin-top: 16px; font-size: 12px; color: var(--text-muted);
+  }
+  .admin-format-hint strong { color: var(--text); }
+  .admin-format-hint code {
+    font-family: 'DM Mono', monospace; background: var(--border);
+    padding: 1px 5px; border-radius: 3px; font-size: 11px; color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .page-wrapper { padding: 0 12px; }
+    .section { padding: 20px 18px; }
+    .fields-grid { grid-template-columns: 1fr; }
+    .phases-grid { grid-template-columns: 1fr; }
+    .form-actions { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+    .btn-reset { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    SharePoint
+  </div>
+  <div class="sep"></div>
+  <div class="page-title">Direction Financière Groupe › Habilitations</div>
+</header>
+
+<div class="page-wrapper">
+  <div class="form-header">
+    <div class="badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      SAP Financial Consolidation (BFC)
+    </div>
+    <h1>Fiche de création / modification d'accès</h1>
+    <p>User ID form — Renseignez les informations ci-dessous pour soumettre votre demande d'habilitation</p>
+  </div>
+
+  <div class="form-body">
+    <div class="required-notice">
+      <span class="star">*</span> Les champs marqués d'une étoile sont obligatoires &nbsp;·&nbsp; <em>Fields with * are mandatory</em>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tabFormBtn" data-tab="formulaire">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Formulaire
+      </button>
+      <button class="tab-btn" id="tabAdminBtn" data-tab="admin">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Admin — Mise à jour des listes
+      </button>
+    </div>
+
+    <!-- Modal mot de passe Admin -->
+    <div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center">
+      <div style="background:white;border-radius:12px;padding:28px 32px;width:340px;box-shadow:0 16px 48px rgba(0,0,0,0.2);position:relative">
+        <button id="closeAdminModalBtn" style="position:absolute;top:12px;right:14px;background:none;border:none;cursor:pointer;color:#6b7280;font-size:18px;line-height:1">×</button>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <div style="width:36px;height:36px;border-radius:50%;background:#e8edf5;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#1a1f2e">Accès Administration</div>
+            <div style="font-size:12px;color:#6b7280">Saisissez le mot de passe</div>
+          </div>
+        </div>
+        <div style="position:relative;margin-bottom:12px">
+          <input type="password" id="adminPwdInput" placeholder="Mot de passe"
+            style="width:100%;padding:9px 38px 9px 13px;border:1.5px solid #e2e6ed;border-radius:7px;font-family:inherit;font-size:14px;outline:none">
+          <button type="button" id="togglePwdBtn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6b7280;padding:0" title="Afficher/masquer">
+            <svg id="pwdEyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div id="adminPwdError" style="display:none;font-size:12px;color:#c8102e;margin-bottom:10px;display:none;align-items:center;gap:5px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Mot de passe incorrect
+        </div>
+        <button id="confirmAdminPwdBtn" style="width:100%;padding:10px;background:#1a3a6b;color:white;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s">
+          Accéder à l'administration
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab : Formulaire -->
+    <div id="tab-formulaire" class="tab-pane active">
+    <form id="habForm" novalidate>
+
+      <!-- Section 1 : Utilisateur -->
+      <div class="section">
+        <div class="section-label">
+          <div class="num">1</div>
+          <h2>Renseignements sur l'utilisateur <span style="color:#b0b8c8;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px">Information about new user</span></h2>
+        </div>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label>Nom <span class="req">*</span> <span class="en">Surname</span></label>
+            <input type="text" id="nom" name="nom" placeholder="Dupont" required>
+          </div>
+          <div class="field">
+            <label>Prénom <span class="req">*</span> <span class="en">First Name</span></label>
+            <input type="text" id="prenom" name="prenom" placeholder="Marie" required>
+          </div>
+          <div class="field field-full">
+            <label>Adresse mail <span class="req">*</span> <span class="en">Email</span></label>
+            <input type="email" id="email" name="email" placeholder="marie.dupont@sncf.fr" required>
+          </div>
+          <div class="field">
+            <label>Utilisateur modèle <span class="en">User model</span></label>
+            <input type="text" id="userModel" name="userModel" placeholder="Login du modèle à copier">
+            <div class="field-hint">Facultatif — copie les droits d'un utilisateur existant</div>
+            <div id="userModelBanner" style="display:none;margin-top:8px;background:#fff8e1;border:1.5px solid #f9a825;border-radius:8px;padding:11px 14px;font-size:12px;color:#5f4000;display:none;align-items:flex-start;gap:10px">
+              <svg style="flex-shrink:0;margin-top:1px" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Le périmètre d'entités et de reporting de l'utilisateur modèle sera repris tel quel. <strong>Seul le profil BFC est modifiable.</strong> Les sections Branche, Accès sociétés et Phases ne s'appliquent pas.</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Utilisateur à désactiver <span class="en">User to disable</span></label>
+            <input type="text" id="userDisable" name="userDisable" placeholder="Login à désactiver (si remplacement)">
+            <div class="field-hint">Facultatif — si remplacement d'un départ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2 : Accès BFC -->
+      <div class="section">
+        <div class="section-label">
+          <div class="num">2</div>
+          <h2>Paramétrage BFC <span style="color:#b0b8c8;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px">BFC Access Configuration</span></h2>
+        </div>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label>Profil BFC <span class="req">*</span> <span class="en">BFC Profile</span></label>
+            <select id="profilBFC" name="profilBFC" required>
+              <option value="">— Sélectionner —</option>
+              <option value="Saisie">Saisie de liasse / Package modification</option>
+              <option value="Restitution">Restitution / Data retrieval</option>
+              <option value="Consolideur">Consolideur</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Type de connexion BFC <span class="req">*</span> <span class="en">Connection type</span></label>
+            <div class="radio-group" id="connexionGroup">
+              <label class="radio-item selected">
+                <input type="radio" name="connexion" value="Web" checked> Web
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="connexion" value="RDS"> RDS
+              </label>
+            </div>
+          </div>
+
+          <div class="field field-full">
+            <label>Macro BFC-Web <span class="en">(Admin rights required)</span></label>
+            <a href="https://sncf.sharepoint.com/sites/PILOTAGEFINANCE/Documents%20partages/Forms/AllItems.aspx?id=%2Fsites%2FPILOTAGEFINANCE%2FDocuments%20partages%2FMacros%20SAP%20FC%20%28Add%2Din%20excel%29&viewid=0fb7505a%2Dda3f%2D4607%2Dac45%2Dfabc4b50e217&newTargetListUrl=%2Fsites%2FPILOTAGEFINANCE%2FDocuments%20partages&viewpath=%2Fsites%2FPILOTAGEFINANCE%2FDocuments%20partages%2FForms%2FAllItems%2Easpx" target="_blank" class="macro-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Macros SAP FC (Add-in Excel) — Lien vers la documentation
+            </a>
+          </div>
+
+          <!-- Branche + Groupe proprio + Accès groupe — masqués si user modèle -->
+          <div id="blocBrancheGroupe" class="field-full" style="display:contents">
+
+          <!-- Branche + Groupe proprio EN PREMIER -->
+          <div id="blocBranche" class="field">
+            <label>Branche <span class="req">*</span></label>
+            <select id="branche" name="branche" required>
+              <option value="">— Sélectionner une branche —</option>
+              <option value="Corporate SNCF">Corporate SNCF</option>
+              <option value="Geodis">Geodis</option>
+              <option value="Gestionnaires d'infrastructure">Gestionnaires d'infrastructure</option>
+              <option value="KEOLIS">KEOLIS</option>
+              <option value="Rail Logistics Europe">Rail Logistics Europe</option>
+              <option value="SNCF Voyageurs">SNCF Voyageurs</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Groupe Propriétaire <span class="req">*</span> <span class="en">Owner group</span></label>
+            <select id="groupeProprietaire" name="groupeProprietaire" required disabled>
+              <option value="">— Sélectionner d'abord une branche —</option>
+            </select>
+            <div class="field-hint" id="groupeHint" style="display:none;color:var(--accent);font-weight:500"></div>
+          </div>
+
+          <!-- Accès Groupe toggle -->
+          <div class="field field-full">
+            <label>Accès Groupe <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item selected" id="agNon">
+                <input type="radio" name="accesGroupe" value="non" checked>
+                <span>Non — accès sociétés spécifiques</span>
+              </label>
+              <label class="radio-item" id="agOui">
+                <input type="radio" name="accesGroupe" value="oui">
+                <span>Oui — accès Groupe complet (Corporate SNCF)</span>
+              </label>
+            </div>
+            <div class="field-hint">Si "Oui", la branche est automatiquement définie sur <strong>Corporate SNCF</strong> et l'accès sociétés n'est pas requis</div>
+          </div>
+
+          <!-- Bandeau accès groupe = oui -->
+          <div id="blocAccesGroupeInfo" class="field field-full" style="display:none">
+            <div style="background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--accent)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Accès Groupe activé — Branche automatiquement définie sur <strong>Corporate SNCF</strong></span>
+            </div>
+          </div>
+
+          </div><!-- /blocBrancheGroupe -->
+        </div><!-- /fields-grid -->
+      </div><!-- /section 2 -->
+
+      <!-- Section 3 : Accès Sociétés -->
+      <div class="section" id="sectionAccesSocietes">
+        <div class="section-label">
+          <div class="num">3</div>
+          <h2>Accès Sociétés <span style="color:#b0b8c8;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px">Entity access</span></h2>
+        </div>
+
+        <!-- Sous-tabs H26 / BR (Geodis) -->
+        <div class="as-tabs" id="asTabs">
+          <button type="button" class="as-tab active" id="tabH26Btn"">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Hiérarchie H26
+          </button>
+          <button type="button" class="as-tab" id="tabBRBtn" style="display:none">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Hiérarchie BR (Geodis)
+          </button>
+          <button type="button" class="as-tab" id="tabUnitBtn"">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Entité unitaire
+          </button>
+        </div>
+
+        <!-- H26 selector -->
+        <div id="asTabH26" class="as-tab-content">
+          <div class="as-cascade">
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">H26-1 — Branche</div>
+              <select id="asH261" size="6" class="as-list">
+                <option value="">— filtré par branche —</option>
+              </select>
+            </div>
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">H26-2</div>
+              <select id="asH262" size="6" class="as-list" disabled>
+                <option value="">—</option>
+              </select>
+              <button type="button" class="as-add-btn" id="addH262Btn" disabled>+ Ajouter H26-2</button>
+            </div>
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">H26-3</div>
+              <select id="asH263" size="6" class="as-list" disabled>
+                <option value="">—</option>
+              </select>
+              <button type="button" class="as-add-btn" id="addH263Btn" disabled>+ Ajouter H26-3</button>
+            </div>
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">H26-4</div>
+              <select id="asH264" size="6" class="as-list" disabled>
+                <option value="">—</option>
+              </select>
+              <button type="button" class="as-add-btn" id="addH264Btn" disabled>+ Ajouter H26-4</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BR selector (Geodis only) -->
+        <div id="asTabBR" class="as-tab-content" style="display:none">
+          <div class="as-cascade">
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">BR1</div>
+              <select id="asBR1" size="6" class="as-list"></select>
+            </div>
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">BR2</div>
+              <select id="asBR2" size="6" class="as-list" disabled></select>
+              <button type="button" class="as-add-btn" id="addBR2Btn" disabled>+ Ajouter BR2</button>
+            </div>
+            <div class="as-cascade-col">
+              <div class="as-cascade-label">BR3</div>
+              <select id="asBR3" size="6" class="as-list" disabled></select>
+              <button type="button" class="as-add-btn" id="addBR3Btn" disabled>+ Ajouter BR3</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entité unitaire selector -->
+        <div id="asTabUnit" class="as-tab-content" style="display:none">
+          <div class="as-search-row">
+            <div style="position:relative;flex:1">
+              <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted)" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="asUnitSearch" placeholder="Rechercher par code ou libellé…" style="padding-left:34px">
+            </div>
+            <button type="button" class="as-add-btn" id="addUnitBtn" disabled style="flex-shrink:0">+ Ajouter l'entité</button>
+          </div>
+          <div id="asUnitResults" class="as-unit-results"></div>
+        </div>
+
+        <!-- Récapitulatif des sélections -->
+        <div id="asSelectionWrap" style="margin-top:20px;display:none">
+          <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+            Sélections
+            <span id="asSelCount" style="background:var(--accent);color:white;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600"></span>
+          </div>
+          <div id="asSelTags" class="as-tags"></div>
+        </div>
+
+        <!-- Hidden inputs pour soumission -->
+        <input type="hidden" id="selHierarchies" name="selHierarchies">
+        <input type="hidden" id="selEntites" name="selEntites">
+      </div>
+
+      <!-- Section 4 : Phases -->
+      <div class="section" id="sectionPhases">
+        <div class="section-label">
+          <div class="num">4</div>
+          <h2>Phases BFC <span style="color:#b0b8c8;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px">BFC Phases</span></h2>
+        </div>
+        <div class="phases-title">Sélectionner les phases souhaitées <span class="req">*</span></div>
+        <div class="phases-grid">
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="C">
+            <span class="phase-code">C</span>
+            <span class="phase-desc">Consolidation statutaire</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="RP/B">
+            <span class="phase-code">RP / B</span>
+            <span class="phase-desc">Phases prévisionnelles statutaires</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="TIT">
+            <span class="phase-code">TIT</span>
+            <span class="phase-desc">Phase Titres</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="TAX">
+            <span class="phase-code">TAX</span>
+            <span class="phase-desc">Phase Tax</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="GC">
+            <span class="phase-code">GC *</span>
+            <span class="phase-desc">Phases réelles / Prévisionnelles Grands Comptes</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="IT">
+            <span class="phase-code">IT / ITB / ITR *</span>
+            <span class="phase-desc">IT Report (Réel et prévisionnel)</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="GPS">
+            <span class="phase-code">GPS</span>
+            <span class="phase-desc">Grand Plan Stratégique de Kéolis</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="RH">
+            <span class="phase-code">RH</span>
+            <span class="phase-desc">Reporting RH</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="DRSE">
+            <span class="phase-code">DRSE</span>
+            <span class="phase-desc">Reporting Responsabilité Sociétale des Entreprises</span>
+          </label>
+          <label class="phase-item">
+            <input type="checkbox" name="phase" value="PS/PSH">
+            <span class="phase-code">PS / PSH</span>
+            <span class="phase-desc">Plan Stratégique Groupe</span>
+          </label>
+        </div>
+        <p style="font-size:11px;color:#b0b8c8;margin-top:10px">* Droits spécifiques nécessitant une validation supplémentaire</p>
+      </div>
+
+      <!-- Section 5 : Validation -->
+      <div class="section validation-bg">
+        <div class="section-label">
+          <div class="num">5</div>
+          <h2>Validation de la demande <span style="color:#b0b8c8;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px">To be filled in by the Branch Manager</span></h2>
+        </div>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label>Nom du demandeur</label>
+            <input type="text" id="demandeur" name="demandeur" placeholder="Nom Prénom du demandeur">
+          </div>
+          <div class="field">
+            <label>Nom du valideur</label>
+            <input type="text" id="valideur" name="valideur" placeholder="Responsable hiérarchique">
+          </div>
+          <div class="field">
+            <label>Date de la validation</label>
+            <input type="date" id="dateValidation" name="dateValidation">
+          </div>
+          <div class="field">
+            <label>Date de fermeture de l'accès</label>
+            <input type="date" id="dateFermeture" name="dateFermeture">
+            <div class="field-hint">Consultant, départ ou changement de poste</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          Soumettre la demande
+        </button>
+        <button type="button" class="btn btn-secondary" id="saveDraftBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Enregistrer en brouillon
+        </button>
+        <button type="reset" class="btn btn-reset" id="resetFormBtn">
+          Réinitialiser
+        </button>
+      </div>
+
+    </form>
+    </div><!-- /tab-formulaire -->
+
+    <!-- Tab : Admin -->
+    <div id="tab-admin" class="tab-pane">
+
+      <!-- Bloc 1 : Hiérarchie des entités -->
+      <div class="admin-section">
+        <div class="section-label">
+          <div class="num" style="background:#1a3a6b">1</div>
+          <h2>Hiérarchie des entités (H26 &amp; BR)</h2>
+        </div>
+
+        <div class="admin-format-hint">
+          <strong>Format attendu</strong> — fichier entités avec les colonnes :<br><br>
+          <code>Code</code> · <code>Libellé long</code> · <code>H26-1 (Code)</code> · <code>H26-1 (Libellé long)</code> · <code>H26-2 (Code)</code> · <code>H26-2 (Libellé long)</code> · <code>H26-3 (Code)</code> · <code>H26-3 (Libellé long)</code> · <code>H26-4 (Code)</code> · <code>H26-4 (Libellé long)</code><br><br>
+          Pour Geodis uniquement : <code>Book reporting 1/2/3 (Code)</code> et <code>Book reporting 1/2/3 (Libellé long)</code>.<br>
+          Les entités avec <code>H26-1 = 9-Z</code> sont automatiquement exclues.
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="admin-drop-zone" id="dropZoneEntities">
+            <input type="file" id="xlsxEntitiesInput" accept=".xlsx,.xls">
+            <div class="dz-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+            <div class="dz-title">Déposer le fichier entités (.xlsx)</div>
+            <div class="dz-sub">Même format que "entités_au_JJ-MM-AAAA.xlsx"</div>
+            <div class="dz-file" id="dzEntitiesName"></div>
+          </div>
+        </div>
+        <div class="admin-error" id="adminEntitiesError">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="adminEntitiesErrorMsg"></span>
+        </div>
+        <div class="admin-info" id="adminEntitiesInfo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="adminEntitiesInfoMsg"></span>
+        </div>
+      </div>
+
+      <!-- Bloc 2 : Groupes propriétaires -->
+      <div class="admin-section">
+        <div class="section-label">
+          <div class="num" style="background:#1a3a6b">2</div>
+          <h2>Groupes propriétaires (Branche → Groupe)</h2>
+        </div>
+
+        <div class="admin-format-hint">
+          <strong>Format attendu</strong> — fichier avec 3 colonnes :<br><br>
+          <code>Code</code> · <code>Libellé long</code> · <code>branche</code><br><br>
+          La première ligne doit être l'en-tête. Les branches sont déduites automatiquement de la colonne <code>branche</code>.
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="admin-drop-zone" id="dropZone">
+            <input type="file" id="xlsxFileInput" accept=".xlsx,.xls">
+            <div class="dz-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+            <div class="dz-title">Déposer le fichier groupes propriétaires (.xlsx)</div>
+            <div class="dz-sub">Même format que "groupe_proprietaire.xlsx"</div>
+            <div class="dz-file" id="dzFileName"></div>
+          </div>
+        </div>
+
+        <div class="admin-error" id="adminError">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="adminErrorMsg"></span>
+        </div>
+
+        <div class="admin-preview" id="adminPreview">
+          <div class="admin-preview-title">
+            Aperçu des données importées
+            <span class="count-badge" id="adminCount"></span>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Code</th><th>Libellé long</th><th>Branche</th></tr></thead>
+              <tbody id="adminTableBody"></tbody>
+            </table>
+          </div>
+          <div class="admin-apply-btn">
+            <button type="button" class="btn btn-primary" id="applyImportBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Appliquer et mettre à jour le formulaire
+            </button>
+            <span style="font-size:12px;color:var(--text-muted)" id="brancheCount"></span>
+          </div>
+          <div class="admin-info" id="adminInfo">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="adminInfoMsg"></span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-admin -->
+
+  </div><!-- /form-body -->
+</div><!-- /page-wrapper -->
+
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="toastIcon"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  function togglePhase(el) {
+    const cb = el.querySelector('input[type="checkbox"]');
+    setTimeout(() => {
+      el.classList.toggle('selected', cb.checked);
+    }, 0);
+  }
+
+  function selectRadio(el) {
+    // Only reset siblings in the same radio-group
+    el.closest('.radio-group').querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+    setTimeout(() => { el.classList.add('selected'); }, 0);
+  }
+
+  // ── User modèle : masque branche/accès/phases ──
+  function onUserModelChange() {
+    const hasModel = document.getElementById('userModel').value.trim().length > 0;
+    const banner = document.getElementById('userModelBanner');
+
+    // Banner
+    banner.style.display = hasModel ? 'flex' : 'none';
+
+    // Masquer/afficher branche, groupe proprio, accès groupe, sections 3 & 4
+    const blocBG = document.getElementById('blocBrancheGroupe');
+    const secAS  = document.getElementById('sectionAccesSocietes');
+    const secPh  = document.getElementById('sectionPhases');
+
+    if (hasModel) {
+      // Tout masquer sauf profil BFC
+      blocBG.style.display = 'none';
+      secAS.style.display  = 'none';
+      secPh.style.display  = 'none';
+    } else {
+      blocBG.style.display = 'contents';
+      secAS.style.display  = '';
+      secPh.style.display  = '';
+    }
+  }
+  // Mapping branche (groupe proprio) → H26-1 codes
+  // Mapping libellé branche (= libellé H26-1) → codes H26-1
+  // Ces libellés correspondent EXACTEMENT aux valeurs H26-1 du fichier entités
+  const BRANCHE_TO_H261 = {
+    "Gestionnaires d'infrastructure": ['1-I'],
+    'Geodis':                         ['2-G'],
+    'Rail Logistics Europe':          ['3-R'],
+    'SNCF Voyageurs':                 ['4-V'],
+    'KEOLIS':                         ['5-K'],
+    'Corporate SNCF':                 ['6-X'],
+  };
+  // Corporate SNCF voit toutes les branches
+  const CORPORATE_BRANCHE = 'Corporate SNCF';
+
+  function onBrancheChange() {
+    filterGroupes();
+    rebuildH261Select();
+  }
+
+  function selectAccesGroupe(el, isOui) {
+    document.getElementById('agNon').classList.toggle('selected', !isOui);
+    document.getElementById('agOui').classList.toggle('selected', isOui);
+    const blocBranche = document.getElementById('blocBranche');
+    const blocInfo    = document.getElementById('blocAccesGroupeInfo');
+    const secAS       = document.getElementById('sectionAccesSocietes');
+    const brancheEl   = document.getElementById('branche');
+    if (isOui) {
+      blocBranche.style.display = 'none';
+      brancheEl.value = CORPORATE_BRANCHE;
+      filterGroupes();
+      blocInfo.style.display = 'block';
+      secAS.style.display = 'none';
+    } else {
+      blocBranche.style.display = 'block';
+      brancheEl.value = '';
+      const gp = document.getElementById('groupeProprietaire');
+      gp.innerHTML = '<option value="">— Sélectionner d\'abord une branche —</option>';
+      gp.disabled = true;
+      document.getElementById('groupeHint').style.display = 'none';
+      blocInfo.style.display = 'none';
+      secAS.style.display = '';
+      rebuildH261Select();
+    }
+  }
+
+  // ── Accès Sociétés state ──
+  var asSelections = []; // [{type:'hier'|'unit', level:'h262'|'h263'|'h264'|'br2'|'br3', code, label}]
+  var asUnitSelected = null;
+
+  function getActiveBranche() {
+    return document.getElementById('branche').value;
+  }
+  function isCorporate(b) { return b === CORPORATE_BRANCHE; }
+  function isGeodis(b) { return b === 'Geodis'; }
+
+  // Fix switchAsTab call in rebuildH261Select to use correct casing
+  function rebuildH261Select() {
+    const branche = getActiveBranche();
+    const sel = document.getElementById('asH261');
+    sel.innerHTML = '';
+    const h261codes = isCorporate(branche) || !branche
+      ? Object.keys(ENTITIES_DATA)
+      : (BRANCHE_TO_H261[branche] || []);
+    h261codes.forEach(code => {
+      const d = ENTITIES_DATA[code];
+      if (!d) return;
+      const o = new Option(code + ' — ' + d.label, code);
+      sel.appendChild(o);
+    });
+    const hasBR = h261codes.some(code => ENTITIES_DATA[code]?.br);
+    document.getElementById('tabBRBtn').style.display = hasBR ? '' : 'none';
+    if (!hasBR) {
+      const brPane = document.getElementById('asTabBR');
+      if (brPane && brPane.classList.contains('active')) switchAsTab('H26');
+    }
+    resetH262();
+    if (h261codes.length === 1) { sel.value = h261codes[0]; onAsH261Change(); }
+    document.getElementById('asUnitSearch').value = '';
+    document.getElementById('asUnitResults').innerHTML = '<div class="as-unit-empty">Saisissez au moins 2 caractères…</div>';
+  }
+
+  function switchAsTab(name) {
+    ['H26','BR','Unit'].forEach(n => {
+      const p = document.getElementById('asTab'+n);
+      if (p) { p.style.display='none'; p.classList.remove('active'); }
+      const b = document.getElementById('tab'+n+'Btn');
+      if (b) b.classList.remove('active');
+    });
+    const pane = document.getElementById('asTab' + name.charAt(0).toUpperCase() + name.slice(1));
+    if (pane) { pane.style.display='block'; pane.classList.add('active'); }
+    const btn = document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1) + 'Btn');
+    if (btn) btn.classList.add('active');
+  }
+
+  function populateSelect(sel, items, placeholder) {
+    sel.innerHTML = '';
+    if (placeholder) sel.appendChild(new Option('— ' + placeholder + ' —', ''));
+    items.forEach(([code, label]) => sel.appendChild(new Option(code + ' — ' + label, code)));
+    sel.disabled = items.length === 0;
+  }
+
+  function resetH262() {
+    populateSelect(document.getElementById('asH262'), [], 'sélectionner H26-1');
+    resetH263();
+    document.getElementById('addH262Btn').disabled = true;
+  }
+  function resetH263() {
+    populateSelect(document.getElementById('asH263'), [], 'sélectionner H26-2');
+    resetH264();
+    document.getElementById('addH263Btn').disabled = true;
+  }
+  function resetH264() {
+    populateSelect(document.getElementById('asH264'), [], 'sélectionner H26-3');
+    document.getElementById('addH264Btn').disabled = true;
+  }
+
+  function onAsH261Change() {
+    const h1 = document.getElementById('asH261').value;
+    if (!h1 || !ENTITIES_DATA[h1]) { resetH262(); return; }
+    const h2 = ENTITIES_DATA[h1].h2;
+    populateSelect(document.getElementById('asH262'), Object.entries(h2).map(([c,v])=>[c,v.label]), 'sélectionner');
+    resetH263();
+    document.getElementById('addH262Btn').disabled = false;
+  }
+  function onAsH262Change() {
+    const h1 = document.getElementById('asH261').value;
+    const h2 = document.getElementById('asH262').value;
+    if (!h1 || !h2) { resetH263(); return; }
+    const h3 = ENTITIES_DATA[h1]?.h2[h2]?.h3 || {};
+    populateSelect(document.getElementById('asH263'), Object.entries(h3).map(([c,v])=>[c,v.label]), 'sélectionner');
+    resetH264();
+    document.getElementById('addH263Btn').disabled = false;
+  }
+  function onAsH263Change() {
+    const h1 = document.getElementById('asH261').value;
+    const h2 = document.getElementById('asH262').value;
+    const h3 = document.getElementById('asH263').value;
+    if (!h1||!h2||!h3) { resetH264(); return; }
+    const h4 = ENTITIES_DATA[h1]?.h2[h2]?.h3[h3]?.h4 || {};
+    populateSelect(document.getElementById('asH264'), Object.entries(h4).map(([c,v])=>[c,v.label]), 'sélectionner');
+    document.getElementById('addH264Btn').disabled = false;
+  }
+
+  // BR hierarchy (Geodis)
+  function initBRSelects() {
+    const br = ENTITIES_DATA['2-G']?.br || {};
+    populateSelect(document.getElementById('asBR1'), Object.entries(br).map(([c,v])=>[c,v.label]), 'sélectionner');
+  }
+  function onAsBR1Change() {
+    const br1 = document.getElementById('asBR1').value;
+    if (!br1) return;
+    const br2 = ENTITIES_DATA['2-G']?.br[br1]?.br2 || {};
+    populateSelect(document.getElementById('asBR2'), Object.entries(br2).map(([c,v])=>[c,v.label]), 'sélectionner');
+    populateSelect(document.getElementById('asBR3'), [], 'sélectionner BR2');
+    document.getElementById('addBR2Btn').disabled = false;
+    document.getElementById('addBR3Btn').disabled = true;
+  }
+  function onAsBR2Change() {
+    const br1 = document.getElementById('asBR1').value;
+    const br2 = document.getElementById('asBR2').value;
+    if (!br1||!br2) return;
+    const br3 = ENTITIES_DATA['2-G']?.br[br1]?.br2[br2]?.br3 || {};
+    populateSelect(document.getElementById('asBR3'), Object.entries(br3).map(([c,v])=>[c,v.label]), 'sélectionner');
+    document.getElementById('addBR3Btn').disabled = false;
+  }
+
+  // Add hierarchy selection
+  function addHierarchy(level) {
+    let code, label;
+    if (level === 'h262') { code = document.getElementById('asH262').value; label = document.getElementById('asH262').options[document.getElementById('asH262').selectedIndex]?.text; }
+    if (level === 'h263') { code = document.getElementById('asH263').value; label = document.getElementById('asH263').options[document.getElementById('asH263').selectedIndex]?.text; }
+    if (level === 'h264') { code = document.getElementById('asH264').value; label = document.getElementById('asH264').options[document.getElementById('asH264').selectedIndex]?.text; }
+    if (level === 'br2')  { code = document.getElementById('asBR2').value;  label = document.getElementById('asBR2').options[document.getElementById('asBR2').selectedIndex]?.text; }
+    if (level === 'br3')  { code = document.getElementById('asBR3').value;  label = document.getElementById('asBR3').options[document.getElementById('asBR3').selectedIndex]?.text; }
+    if (!code || code === '') return;
+    if (asSelections.find(s => s.code === code)) { showToast('Déjà dans la sélection', true); return; }
+    asSelections.push({ type: 'hier', level, code, label: label?.replace(/^[^—]*— /, '') || code });
+    renderTags();
+  }
+
+  // Unit search
+  function onUnitSearch() {
+    const q = document.getElementById('asUnitSearch').value.trim().toLowerCase();
+    const branche = getActiveBranche();
+    const h261codes = isCorporate(branche) || !branche
+      ? Object.keys(ENTITIES_FLAT)
+      : (BRANCHE_TO_H261[branche] || []);
+    const container = document.getElementById('asUnitResults');
+    if (q.length < 2) { container.innerHTML = '<div class="as-unit-empty">Saisissez au moins 2 caractères…</div>'; asUnitSelected = null; document.getElementById('addUnitBtn').disabled = true; return; }
+    let results = [];
+    h261codes.forEach(h1 => {
+      (ENTITIES_FLAT[h1] || []).forEach(e => {
+        if (e.c.toLowerCase().includes(q) || e.l.toLowerCase().includes(q)) results.push(e);
+      });
+    });
+    results = results.slice(0, 50);
+    if (!results.length) { container.innerHTML = '<div class="as-unit-empty">Aucune entité trouvée</div>'; return; }
+    container.innerHTML = results.map(e =>
+      `<div class="as-unit-item${asUnitSelected===e.c?' selected':''}" data-code="${e.c}" data-label="${e.l.replace(/"/g,'&quot;')}">
+        <span class="unit-code">${e.c}</span><span class="unit-label">${e.l}</span>
+      </div>`
+    ).join('');
+    document.getElementById('addUnitBtn').disabled = !asUnitSelected;
+  }
+  function selectUnit(code, label) {
+    asUnitSelected = { code, label };
+    document.querySelectorAll('.as-unit-item').forEach(el => el.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    document.getElementById('addUnitBtn').disabled = false;
+  }
+  function addUnit() {
+    if (!asUnitSelected) return;
+    if (asSelections.find(s => s.code === asUnitSelected.code)) { showToast('Déjà dans la sélection', true); return; }
+    asSelections.push({ type: 'unit', code: asUnitSelected.code, label: asUnitSelected.label });
+    asUnitSelected = null;
+    document.getElementById('addUnitBtn').disabled = true;
+    document.getElementById('asUnitSearch').value = '';
+    document.getElementById('asUnitResults').innerHTML = '';
+    renderTags();
+  }
+
+  function removeSelection(code) {
+    asSelections = asSelections.filter(s => s.code !== code);
+    renderTags();
+  }
+
+  function renderTags() {
+    const wrap = document.getElementById('asSelectionWrap');
+    const container = document.getElementById('asSelTags');
+    const count = document.getElementById('asSelCount');
+    if (!asSelections.length) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    count.textContent = asSelections.length;
+    container.innerHTML = asSelections.map(s =>
+      `<span class="as-tag ${s.type}">
+        <span class="tag-type">${s.type === 'hier' ? s.level.toUpperCase() : 'ENTITÉ'}</span>
+        ${s.code}
+        <button type="button" class="tag-remove" data-code="${s.code}" title="Retirer">×</button>
+      </span>`
+    ).join('');
+    // Update hidden inputs
+    const hiers = asSelections.filter(s=>s.type==='hier').map(s=>s.code).join(',');
+    const units = asSelections.filter(s=>s.type==='unit').map(s=>s.code).join(',');
+    document.getElementById('selHierarchies').value = hiers;
+    document.getElementById('selEntites').value = units;
+  }
+
+  // ── Initialisation & câblage de tous les événements ──
+  function initEvents() {
+
+    // Tabs principaux
+    document.getElementById('tabFormBtn').addEventListener('click', function() {
+      switchTab('formulaire', this);
+    });
+    document.getElementById('tabAdminBtn').addEventListener('click', function() {
+      askAdminPassword(this);
+    });
+
+    // Modal admin password
+    document.getElementById('closeAdminModalBtn').addEventListener('click', closeAdminModal);
+    document.getElementById('confirmAdminPwdBtn').addEventListener('click', checkAdminPwd);
+    document.getElementById('togglePwdBtn').addEventListener('click', togglePwdVisibility);
+    document.getElementById('adminPwdInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkAdminPwd();
+    });
+    document.getElementById('adminModal').addEventListener('click', function(e) {
+      if (e.target === this) closeAdminModal();
+    });
+
+    // Connexion Web/RDS radio
+    document.querySelectorAll('#connexionGroup .radio-item').forEach(function(el) {
+      el.addEventListener('click', function() { selectRadio(this); });
+    });
+
+    // User modèle
+    document.getElementById('userModel').addEventListener('input', onUserModelChange);
+
+    // Branche
+    document.getElementById('branche').addEventListener('change', onBrancheChange);
+
+    // Accès groupe
+    document.getElementById('agNon').addEventListener('click', function() { selectAccesGroupe(this, false); });
+    document.getElementById('agOui').addEventListener('click', function() { selectAccesGroupe(this, true); });
+
+    // AS tabs
+    document.getElementById('tabH26Btn').addEventListener('click', function() { switchAsTab('H26'); });
+    document.getElementById('tabBRBtn').addEventListener('click', function() { switchAsTab('BR'); });
+    document.getElementById('tabUnitBtn').addEventListener('click', function() { switchAsTab('Unit'); });
+
+    // H26 cascade selects
+    document.getElementById('asH261').addEventListener('change', onAsH261Change);
+    document.getElementById('asH262').addEventListener('change', onAsH262Change);
+    document.getElementById('asH263').addEventListener('change', onAsH263Change);
+
+    // H26 add buttons
+    document.getElementById('addH262Btn').addEventListener('click', function() { addHierarchy('h262'); });
+    document.getElementById('addH263Btn').addEventListener('click', function() { addHierarchy('h263'); });
+    document.getElementById('addH264Btn').addEventListener('click', function() { addHierarchy('h264'); });
+
+    // BR selects + buttons
+    document.getElementById('asBR1').addEventListener('change', onAsBR1Change);
+    document.getElementById('asBR2').addEventListener('change', onAsBR2Change);
+    document.getElementById('addBR2Btn').addEventListener('click', function() { addHierarchy('br2'); });
+    document.getElementById('addBR3Btn').addEventListener('click', function() { addHierarchy('br3'); });
+
+    // Entité unitaire search + add
+    document.getElementById('asUnitSearch').addEventListener('input', onUnitSearch);
+    document.getElementById('addUnitBtn').addEventListener('click', addUnit);
+
+    // Délégation d'événements pour les résultats de recherche entité (dynamiques)
+    document.getElementById('asUnitResults').addEventListener('click', function(e) {
+      const item = e.target.closest('.as-unit-item');
+      if (item) {
+        document.querySelectorAll('.as-unit-item').forEach(function(el) { el.classList.remove('selected'); });
+        item.classList.add('selected');
+        asUnitSelected = { code: item.dataset.code, label: item.dataset.label };
+        document.getElementById('addUnitBtn').disabled = false;
+      }
+    });
+
+    // Délégation pour supprimer une sélection (tags dynamiques)
+    document.getElementById('asSelTags').addEventListener('click', function(e) {
+      const btn = e.target.closest('.tag-remove');
+      if (btn) removeSelection(btn.dataset.code);
+    });
+
+    // Phase items
+    document.querySelectorAll('.phase-item').forEach(function(el) {
+      el.addEventListener('click', function() { togglePhase(this); });
+    });
+
+    // Boutons du formulaire
+    document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
+    document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+
+    // Admin : import fichiers
+    document.getElementById('xlsxEntitiesInput').addEventListener('change', function() {
+      if (this.files[0]) handleEntitiesFile(this.files[0]);
+    });
+    document.getElementById('xlsxFileInput').addEventListener('change', function() {
+      if (this.files[0]) handleXlsxFile(this.files[0]);
+    });
+    document.getElementById('applyImportBtn').addEventListener('click', applyImport);
+
+    // Drag & drop zones
+    var dz1 = document.getElementById('dropZoneEntities');
+    dz1.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+    dz1.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+    dz1.addEventListener('drop', function(e) {
+      e.preventDefault(); this.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) handleEntitiesFile(e.dataTransfer.files[0]);
+    });
+    var dz2 = document.getElementById('dropZone');
+    dz2.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+    dz2.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+    dz2.addEventListener('drop', function(e) {
+      e.preventDefault(); this.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) handleXlsxFile(e.dataTransfer.files[0]);
+    });
+
+    // Formulaire soumission
+    document.getElementById('habForm').addEventListener('submit', handleFormSubmit);
+
+    // Init des sélecteurs
+    rebuildH261Select();
+    initBRSelects();
+    switchAsTab('H26');
+    document.getElementById('dateValidation').valueAsDate = new Date();
+  }
+
+  // Lancer l'init dès que le DOM est prêt
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEvents);
+  } else {
+    initEvents();
+  }
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.toggle('error', isError);
+    if (isError) {
+      icon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+    } else {
+      icon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+    }
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function saveDraft() {
+    showToast('Brouillon enregistré avec succès');
+  }
+
+  function resetForm() {
+    document.querySelectorAll('.phase-item').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+    document.querySelector('.radio-item').classList.add('selected');
+    showToast('Formulaire réinitialisé');
+  }
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    const accesGroupe  = document.querySelector('input[name="accesGroupe"]:checked')?.value === 'oui';
+    const hasUserModel = document.getElementById('userModel').value.trim().length > 0;
+
+    let missing = [];
+
+    // Champs toujours obligatoires
+    const alwaysRequired = ['nom', 'prenom', 'email', 'profilBFC'];
+    // Branche + groupe proprio : requis sauf si user modèle sans branche forcée
+    const brancheRequired = !hasUserModel || accesGroupe;
+    const extraRequired = brancheRequired
+      ? ['groupeProprietaire']
+      : ['groupeProprietaire'];
+    if (!hasUserModel && !accesGroupe) extraRequired.unshift('branche');
+
+    [...alwaysRequired, ...extraRequired].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el || !el.offsetParent) return; // skip hidden fields
+      if (!el.value.trim()) {
+        el.style.borderColor = 'var(--required)';
+        missing.push(el.previousElementSibling?.textContent.trim().split('*')[0].trim() || id);
+        setTimeout(() => el.style.borderColor = '', 2000);
+      }
+    });
+
+    // Accès sociétés : obligatoire seulement si pas user modèle et pas accès groupe
+    if (!hasUserModel && !accesGroupe && asSelections.length === 0) {
+      document.getElementById('asSelectionWrap').style.display = 'block';
+      document.getElementById('asSelTags').innerHTML = '<div style="color:var(--required);font-size:12px;font-weight:500">⚠ Veuillez sélectionner au moins une hiérarchie ou entité</div>';
+      missing.push('Accès sociétés');
+    }
+
+    // Phases : obligatoires seulement si pas user modèle
+    if (!hasUserModel) {
+      const phases = document.querySelectorAll('input[name="phase"]:checked');
+      if (phases.length === 0) {
+        const grid = document.querySelector('.phases-grid');
+        grid.style.outline = '2px solid var(--required)';
+        grid.style.borderRadius = '8px';
+        missing.push('Phase BFC');
+        setTimeout(() => { grid.style.outline = ''; }, 2000);
+      }
+    }
+
+    if (missing.length > 0) {
+      showToast('Champ(s) obligatoire(s) manquant(s) : ' + missing.slice(0, 3).join(', '), true);
+      return;
+    }
+    showToast('Demande soumise avec succès ! Une confirmation vous sera envoyée par email.');
+  }
+
+  // Cascaded Branche → Groupe Propriétaire
+  const groupeData = {
+    "Corporate SNCF": [
+      {code:"X-AUDIT", label:"SA SNCF - AUDIT"},
+      {code:"X-COFT", label:"SA SNCF - COFT"},
+      {code:"X-COMPTA-FIL", label:"SA SNCF - Compta des Filliales"},
+      {code:"X-COMPTA-SA", label:"SA SNCF - Compta de la SA"},
+      {code:"X-CONSO", label:"SA SNCF Consolidation"},
+      {code:"X-CTRL-FIN", label:"SA SNCF Contrôles Financiers"},
+      {code:"X-FISCA", label:"SA SNCF Fiscalité"},
+      {code:"X-IMMO", label:"SA SNCF - Branche Immobilière"},
+      {code:"X-NORMES", label:"SA SNCF Normes"},
+      {code:"X-ORFEA", label:"SA SNCF ORFEA"},
+      {code:"X-PERFORM", label:"SA SNCF Performance"},
+      {code:"X-PLAN-STRAT", label:"Phase PS et PSH uniquement"},
+      {code:"X-PS", label:"SA SNCF Proctection Sociale"},
+      {code:"X-RH-SNCF", label:"SA SNCF - RH"},
+      {code:"X-RSE-SNCF", label:"SA SNCF - RSE"},
+      {code:"X-TRESO", label:"SA SNCF Trésorerie"}
+    ],
+    "Geodis": [
+      {code:"L-AUDIT", label:"SNCF LOGISTICS Audit interne"},
+      {code:"L-GEO-AMER", label:"SNCF GEODIS - AMER"},
+      {code:"L-GEO-APAC", label:"SNCF GEODIS - APAC"},
+      {code:"L-GEO-CORP", label:"SNCF GEODIS CORPORATE"},
+      {code:"L-GEO-EUR", label:"SNCF GEODIS- Europe"},
+      {code:"L-GEO-FF", label:"SNCF GEODIS - FF Monde"},
+      {code:"L-GEO-FFFRA", label:"SNCF GEODIS - FF FRANCE"},
+      {code:"L-GEO-FISCA", label:"SNCF GEODIS - Fiscalité"},
+      {code:"L-GEO-FLEX", label:"SNCF GEODIS - TRANS O FLEX"},
+      {code:"L-GEO-FR", label:"SNCF GEODIS - France"},
+      {code:"L-GEO-GC", label:"SNCF GEODIS - Grands Comptes"},
+      {code:"L-GEO-IT", label:"SNCF GEODIS - IT"},
+      {code:"L-GEO-LOG", label:"SNCF GEODIS - Logistique Monde"},
+      {code:"L-GEO-MSG", label:"SNCF GEODIS - MSG"},
+      {code:"L-GEO-NCE", label:"SNCF GEODIS - NCE"},
+      {code:"L-GEO-OHL", label:"SNCF GEODIS - OHL"},
+      {code:"L-GEO-ROAD", label:"SNCF GEODIS - ROAD"},
+      {code:"L-GEO-SCO", label:"SNCF GEODIS - SCO"},
+      {code:"L-GEO-SIEGE", label:"SNCF GEODIS -SIEGE"},
+      {code:"L-GEO-WEMEA", label:"SNCF GEODIS -WEMEA"}
+    ],
+    "Gestionnaires d'infrastructure": [
+      {code:"I-GARES", label:"SA SNCF Gares et Connexions"},
+      {code:"I-RESEAU", label:"SA SNCF RESEAU"}
+    ],
+    "KEOLIS": [
+      {code:"V-KEO-DRNE", label:"KEOLIS Direction Régionnale Nord Est"},
+      {code:"V-KEO-DRNO", label:"KEOLIS Direction Régionnale Nord Ouest"},
+      {code:"V-KEO-DRSE", label:"KEOLIS Direction Régionnale Sud Est"},
+      {code:"V-KEO-DRSO", label:"KEOLIS Direction Régionnale Sud Ouest"},
+      {code:"V-KEO-EFFIA", label:"KEOLIS EFFIA"},
+      {code:"V-KEO-GR", label:"KEOLIS Grands Reseaux"},
+      {code:"V-KEO-GU", label:"KEOLIS Grands Urbains"},
+      {code:"V-KEO-HOLD", label:"KEOLIS Holding"},
+      {code:"V-KEO-IDF", label:"KEOLIS Ile de France"},
+      {code:"V-KEO-INT", label:"KEOLIS International"},
+      {code:"V-KEO-KISIO", label:"KEOLIS Kisio"},
+      {code:"V-KEO-SANTE", label:"KEOLIS Santé"},
+      {code:"V-KEOLIS", label:"KEOLIS"}
+    ],
+    "Rail Logistics Europe": [
+      {code:"L-RLE", label:"Rail Logistics Europe"}
+    ],
+    "SNCF Voyageurs": [
+      {code:"V-CORP-SA", label:"SA Voyageurs - Corporate"},
+      {code:"V-D-INDUST", label:"SA VOYAGEURS - Direction Industrielle"},
+      {code:"V-DIVERS", label:"SA Voyageurs - Autres"},
+      {code:"V-INTERCITES", label:"SNCF PROXIMITES - Intercités"},
+      {code:"V-MATERIEL", label:"SNCF Matériel"},
+      {code:"V-PROXI", label:"SNCF PROXIMITES - Proximités"},
+      {code:"V-SVD", label:"SA VOYAGEURS SVD"},
+      {code:"V-TER", label:"SNCF PROXIMITES -TER"},
+      {code:"V-TRANSILIEN", label:"SNCF PROXIMITES -Transilien"},
+      {code:"V-VOYAGES", label:"SA VOYAGEURS - Voyages"}
+    ]
+  };
+
+  function filterGroupes() {
+    const branche = document.getElementById('branche').value;
+    const select = document.getElementById('groupeProprietaire');
+    const hint = document.getElementById('groupeHint');
+    select.innerHTML = '';
+    if (!branche) {
+      select.innerHTML = '<option value="">— Sélectionner d\'abord une branche —</option>';
+      select.disabled = true;
+      hint.style.display = 'none';
+      return;
+    }
+    const items = groupeData[branche] || [];
+    select.innerHTML = '<option value="">— Sélectionner un groupe —</option>';
+    items.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.code;
+      opt.textContent = item.code + ' → ' + item.label;
+      select.appendChild(opt);
+    });
+    select.disabled = false;
+    hint.textContent = items.length + ' groupe(s) disponible(s) pour cette branche';
+    hint.style.display = 'block';
+  }
+
+  // After applyImport rebuilds groupe proprio, also rebuild H261 selects
+  // (handled inline in applyImport itself below via rebuildAfterImport)
+  function rebuildAfterImport() {
+    rebuildH261Select();
+    initBRSelects();
+  }
+
+  // ── Entities file import ──
+  function handleEntitiesFile(file) {
+    const errEl = document.getElementById('adminEntitiesError');
+    const infoEl = document.getElementById('adminEntitiesInfo');
+    errEl.style.display = 'none'; infoEl.style.display = 'none';
+    if (!file || !file.name.match(/\.xlsx?$/i)) {
+      document.getElementById('adminEntitiesErrorMsg').textContent = 'Format invalide — fichier .xlsx requis';
+      errEl.style.display = 'flex'; return;
+    }
+    document.getElementById('dzEntitiesName').textContent = '📄 ' + file.name;
+    document.getElementById('dzEntitiesName').style.display = 'block';
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        if (!rows.length) throw new Error('Fichier vide');
+        const keys = Object.keys(rows[0]);
+        const col = name => keys.find(k => k.toLowerCase().includes(name.toLowerCase()));
+        const codeKey = col('Code');
+        const h1c = col('H26-1 (Code)'), h1l = col('H26-1 (Libellé');
+        const h2c = col('H26-2 (Code)'), h2l = col('H26-2 (Libellé');
+        const h3c = col('H26-3 (Code)'), h3l = col('H26-3 (Libellé');
+        const h4c = col('H26-4 (Code)'), h4l = col('H26-4 (Libellé');
+        const labelKey = col('Libellé long');
+        const br1c = col('Book reporting 1 (Code)'), br1l = col('Book reporting 1 (Libellé');
+        const br2c = col('Book reporting 2 (Code)'), br2l = col('Book reporting 2 (Libellé');
+        const br3c = col('Book reporting 3 (Code)'), br3l = col('Book reporting 3 (Libellé');
+        if (!codeKey||!h1c) throw new Error('Colonnes H26-1 introuvables. En-têtes : ' + keys.slice(0,6).join(', '));
+        // Rebuild ENTITIES_DATA and ENTITIES_FLAT
+        const newData = {}, newFlat = {};
+        rows.forEach(r => {
+          const code = String(r[codeKey]||'').trim();
+          const h1Code = String(r[h1c]||'').trim();
+          if (!code || h1Code === '9-Z' || !h1Code) return;
+          const h1Label = String(r[h1l]||'').trim();
+          const h2Code = String(r[h2c]||'').trim(), h2Label = String(r[h2l]||'').trim();
+          const h3Code = String(r[h3c]||'').trim(), h3Label = String(r[h3l]||'').trim();
+          const h4Code = String(r[h4c]||'').trim(), h4Label = String(r[h4l]||'').trim();
+          const entLabel = String(r[labelKey]||'').trim();
+          const br1Code = String(r[br1c]||'').trim(), br1Label = String(r[br1l]||'').trim();
+          const br2Code = String(r[br2c]||'').trim(), br2Label = String(r[br2l]||'').trim();
+          const br3Code = String(r[br3c]||'').trim(), br3Label = String(r[br3l]||'').trim();
+          if (!newData[h1Code]) {
+            newData[h1Code] = { label: h1Label, branche: BRANCHE_TO_H261_INV[h1Code]||'', h2: {} };
+            newFlat[h1Code] = [];
+          }
+          if (h2Code && !newData[h1Code].h2[h2Code]) newData[h1Code].h2[h2Code] = { label: h2Label, h3: {} };
+          if (h2Code && h3Code && !newData[h1Code].h2[h2Code].h3[h3Code]) newData[h1Code].h2[h2Code].h3[h3Code] = { label: h3Label, h4: {} };
+          if (h2Code && h3Code && h4Code && !newData[h1Code].h2[h2Code].h3[h3Code].h4[h4Code]) newData[h1Code].h2[h2Code].h3[h3Code].h4[h4Code] = { label: h4Label, entities: [] };
+          if (h2Code && h3Code && h4Code) newData[h1Code].h2[h2Code].h3[h3Code].h4[h4Code].entities.push({ code, label: entLabel });
+          newFlat[h1Code].push({ c: code, l: entLabel });
+          // BR for Geodis
+          if (h1Code === '2-G' && br1Code && br1Code !== 'NA') {
+            if (!newData[h1Code].br) newData[h1Code].br = {};
+            if (!newData[h1Code].br[br1Code]) newData[h1Code].br[br1Code] = { label: br1Label, br2: {} };
+            if (br2Code && !newData[h1Code].br[br1Code].br2[br2Code]) newData[h1Code].br[br1Code].br2[br2Code] = { label: br2Label, br3: {} };
+            if (br2Code && br3Code && !newData[h1Code].br[br1Code].br2[br2Code].br3[br3Code]) newData[h1Code].br[br1Code].br2[br2Code].br3[br3Code] = { label: br3Label };
+          }
+        });
+        // Apply
+        Object.keys(ENTITIES_DATA).forEach(k => delete ENTITIES_DATA[k]);
+        Object.assign(ENTITIES_DATA, newData);
+        Object.keys(ENTITIES_FLAT).forEach(k => delete ENTITIES_FLAT[k]);
+        Object.assign(ENTITIES_FLAT, newFlat);
+        rebuildH261Select();
+        initBRSelects();
+        const total = Object.values(newFlat).reduce((s,a)=>s+a.length,0);
+        document.getElementById('adminEntitiesInfoMsg').textContent =
+          `✓ ${Object.keys(newData).length} branches, ${total} entités chargées — sélecteurs mis à jour`;
+        infoEl.style.display = 'flex';
+        showToast('Entités mises à jour avec succès !');
+      } catch(err) {
+        document.getElementById('adminEntitiesErrorMsg').textContent = 'Erreur : ' + err.message;
+        errEl.style.display = 'flex';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  // Inverse mapping H261 → branche
+  const BRANCHE_TO_H261_INV = {};
+  Object.entries(BRANCHE_TO_H261).forEach(([b, codes]) => codes.forEach(c => BRANCHE_TO_H261_INV[c] = b));
+
+  // ── Admin password protection ──
+  const ADMIN_PASSWORD = 'Admin2026!';
+  var adminTabBtn = null;
+
+  function askAdminPassword(btn) {
+    adminTabBtn = btn;
+    document.getElementById('adminPwdInput').value = '';
+    document.getElementById('adminPwdError').style.display = 'none';
+    document.getElementById('adminModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('adminPwdInput').focus(), 50);
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminModal').style.display = 'none';
+    document.getElementById('adminPwdInput').value = '';
+    document.getElementById('adminPwdError').style.display = 'none';
+  }
+
+  function checkAdminPwd() {
+    const val = document.getElementById('adminPwdInput').value;
+    if (val === ADMIN_PASSWORD) {
+      closeAdminModal();
+      switchTab('admin', adminTabBtn);
+    } else {
+      document.getElementById('adminPwdError').style.display = 'flex';
+      const input = document.getElementById('adminPwdInput');
+      input.style.borderColor = 'var(--required)';
+      setTimeout(() => { input.style.borderColor = ''; }, 2000);
+    }
+  }
+
+  function togglePwdVisibility() {
+    const input = document.getElementById('adminPwdInput');
+    const icon = document.getElementById('pwdEyeIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    } else {
+      input.type = 'password';
+      icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+  }
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── Parse xlsx and preview ──
+  let pendingData = null;
+
+  function handleXlsxFile(file) {
+    const errEl = document.getElementById('adminError');
+    const errMsg = document.getElementById('adminErrorMsg');
+    errEl.style.display = 'none';
+    document.getElementById('adminPreview').style.display = 'none';
+    document.getElementById('adminInfo').style.display = 'none';
+
+    if (!file || !file.name.match(/\.xlsx?$/i)) {
+      errMsg.textContent = 'Format invalide — veuillez sélectionner un fichier .xlsx';
+      errEl.style.display = 'flex'; return;
+    }
+
+    document.getElementById('dzFileName').textContent = '📄 ' + file.name;
+    document.getElementById('dzFileName').style.display = 'block';
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+        if (!rows.length) throw new Error('Feuille vide');
+        const first = rows[0];
+        const keys = Object.keys(first);
+        // Flexible header matching
+        const codeKey   = keys.find(k => k.toLowerCase().includes('code'));
+        const labelKey  = keys.find(k => k.toLowerCase().includes('lib') || k.toLowerCase().includes('label') || k.toLowerCase().includes('long'));
+        const brancheKey = keys.find(k => k.toLowerCase().includes('branche'));
+
+        if (!codeKey || !labelKey || !brancheKey) {
+          throw new Error(`Colonnes introuvables. En-têtes détectés : ${keys.join(', ')}. Attendu : Code, Libellé long, branche`);
+        }
+
+        pendingData = {};
+        rows.forEach(row => {
+          const code    = String(row[codeKey]).trim();
+          const label   = String(row[labelKey]).trim();
+          const branche = String(row[brancheKey]).trim();
+          if (!code || !branche) return;
+          if (!pendingData[branche]) pendingData[branche] = [];
+          pendingData[branche].push({ code, label });
+        });
+
+        const totalGroupes = rows.filter(r => String(r[codeKey]).trim()).length;
+        const branches = Object.keys(pendingData);
+
+        // Render table preview
+        const tbody = document.getElementById('adminTableBody');
+        tbody.innerHTML = '';
+        rows.slice(0, 100).forEach(row => {
+          const code    = String(row[codeKey]).trim();
+          const label   = String(row[labelKey]).trim();
+          const branche = String(row[brancheKey]).trim();
+          if (!code) return;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${code}</td><td>${label}</td><td><span class="branche-pill">${branche}</span></td>`;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById('adminCount').textContent = totalGroupes + ' groupes';
+        document.getElementById('brancheCount').textContent = branches.length + ' branche(s) : ' + branches.join(' · ');
+        document.getElementById('adminPreview').style.display = 'block';
+
+      } catch(err) {
+        errMsg.textContent = 'Erreur de lecture : ' + err.message;
+        errEl.style.display = 'flex';
+        pendingData = null;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // ── Apply import to form ──
+  function applyImport() {
+    if (!pendingData) return;
+
+    // 1. Mettre à jour groupeData
+    Object.keys(groupeData).forEach(k => delete groupeData[k]);
+    Object.assign(groupeData, pendingData);
+
+    // 2. Reconstruire le select #branche depuis les clés de groupeData
+    // Les clés = libellés branche = libellés H26-1 (mapping fixe)
+    const brancheSelect = document.getElementById('branche');
+    const brancheActuelle = brancheSelect.value;
+    brancheSelect.innerHTML = '<option value="">— Sélectionner une branche —</option>';
+    Object.keys(groupeData).sort().forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b;
+      opt.textContent = b;
+      brancheSelect.appendChild(opt);
+    });
+
+    // 3. Restaurer la branche sélectionnée si elle existe encore
+    if (brancheActuelle && groupeData[brancheActuelle]) {
+      brancheSelect.value = brancheActuelle;
+      filterGroupes();
+    } else {
+      const groupeSelect = document.getElementById('groupeProprietaire');
+      groupeSelect.innerHTML = '<option value="">— Sélectionner d\'abord une branche —</option>';
+      groupeSelect.disabled = true;
+      document.getElementById('groupeHint').style.display = 'none';
+    }
+
+    // 4. Reconstruire le sélecteur H26-1 (le mapping BRANCHE_TO_H261 est fixe,
+    //    les clés de groupeData = libellés H26-1 → ça marche directement)
+    rebuildH261Select();
+
+    const branches = Object.keys(groupeData);
+    const totalGroupes = Object.values(groupeData).reduce((s,a) => s + a.length, 0);
+    document.getElementById('adminInfoMsg').textContent =
+      `✓ ${branches.length} branche(s), ${totalGroupes} groupes propriétaires chargés.`;
+    document.getElementById('adminInfo').style.display = 'flex';
+    showToast('Groupes propriétaires mis à jour !');
+  }
+</script>
+
+</body>
+</html>
